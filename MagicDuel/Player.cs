@@ -15,6 +15,9 @@ namespace MagicDuel
             return CalculatePlay(game);
         }
 
+        public void ResetModifiers()
+            => _modifiers = Modifiers.All;
+
         private PlayerPlay CalculatePlay(Game game)
         {
             Card[] knownNonEnemyCards = [.. game.PlayedPile, .. game.DiscardedPile(this), .. _cards];
@@ -24,7 +27,7 @@ namespace MagicDuel
             var playedCard = CalculatePlayedCard(values);
             _cards.Remove(playedCard);
 
-            var playedModifiers = CalculatePlayedModifiers(values[playedCard], possibleEnemyCards.Length);
+            var playedModifiers = CalculatePlayedModifiers(values[playedCard], possibleEnemyCards.Length, game.DrawingPileLeft);
             values.Remove(playedCard);
 
             var discardedCards = CalculateDiscardedCards(values, possibleEnemyCards.Length);
@@ -54,7 +57,7 @@ namespace MagicDuel
             return playedCard;
         }
 
-        private Modifiers CalculatePlayedModifiers(int winPossibilities, int totalPossibilities)
+        private Modifiers CalculatePlayedModifiers(int winPossibilities, int totalPossibilities, int drawingPileLeft)
         {
             var result = Modifiers.None;
 
@@ -63,6 +66,9 @@ namespace MagicDuel
 
             if (_modifiers.HasFlag(Modifiers.MinusOneWhenLose) && Random.Next(totalPossibilities) >= winPossibilities)
                 result |= Modifiers.MinusOneWhenLose;
+
+            if (Random.Next(20) > drawingPileLeft)
+                result = _modifiers;
 
             _modifiers &= ~result;
 

@@ -16,6 +16,9 @@ namespace MagicDuel
         private readonly List<Card> _playedPile = [];
         private readonly Dictionary<Element, List<Card>> _discardPile = new() { { Player1.Element, [] }, { Player2.Element, [] } };
         public IReadOnlyList<Card> PlayedPile => [.. _playedPile];
+
+        public int DrawingPileLeft  => _drawingPile.Count;
+
         public IReadOnlyList<Card> DiscardedPile(Player player) => [.. _discardPile[player.Element]];
 
         public bool PlayTurn()
@@ -52,7 +55,12 @@ namespace MagicDuel
                 _discardPile[Player1.Element].Clear();
                 _discardPile[Player2.Element].Clear();
 
+                Player1.ResetModifiers();
+                Player2.ResetModifiers();
+
                 BoardHalfSize--;
+
+                Console.WriteLine("Discard pile shuffled and put in drawing pile");
             }
 
             return _drawingPile.Pop();

@@ -5,9 +5,10 @@ int player1Wins = 0, player2Wins = 0;
 
 var tries = 100000;
 List<int> turncount = new(tries);
-for(var i= 0; i < tries; i++)
+var masterRandom = new Random(tries);
+for (var i= 0; i < tries; i++)
 {
-    var random = new Random(i * tries);
+    var random = new Random(masterRandom.Next());
 
     var game = new Game(
          5,
